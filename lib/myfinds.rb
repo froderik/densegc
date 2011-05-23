@@ -20,21 +20,21 @@ class MyFindsStatisticsGenerator
   
   def grab_data
     @html = IO.read 'myfinds.html'
-    @finds = []
     document = Nokogiri::HTML.parse @html
+    @engine = StatisticsEngine.new
     document.xpath( '//table[@class="Table"]/tbody/tr' ).each do |row|
       cells = row.search 'td'
       cache = {}
       cache[:date] = date_from cells
       cache[:name] = name_from cells
       cache[:region], cache[:country] = location_from cells
-      @finds << cache
+      @engine.add cache
     end
   end
   
   def generate_statistics
     report = ''
-    report << 'Found in total: ' + @finds.size.to_s
+    report << 'Found in total: ' + @engine.count.to_s
     puts report
   end
   
@@ -54,9 +54,11 @@ class MyFindsStatisticsGenerator
     location = cells[4].inner_text
     parts = location.split ','
     if parts.size == 2
-      region, country = parts[0].strip, parts[1].strip.split( "\r" )[0]
+      region = parts[0].strip
+      country = parts[1].strip.split( "\r" )[0]
     else
-      region, country = '', parts[0].strip
+      region = ''
+      country = parts[0].strip
     end
     [region, country]
   end
