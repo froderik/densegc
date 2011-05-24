@@ -22,6 +22,7 @@ class MyFindsStatisticsGenerator
     @html = IO.read 'myfinds.html'
     document = Nokogiri::HTML.parse @html
     @engine = StatisticsEngine.new
+    @engine.add_handler Counter.new
     document.xpath( '//table[@class="Table"]/tbody/tr' ).each do |row|
       cells = row.search 'td'
       cache = {}
@@ -33,9 +34,7 @@ class MyFindsStatisticsGenerator
   end
   
   def generate_statistics
-    report = ''
-    report << 'Found in total: ' + @engine.count.to_s
-    puts report
+    puts @engine.report
   end
   
   :private
