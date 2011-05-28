@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'nokogiri'
+require 'date'
 
 class MyFindsStatisticsGenerator
   def initialize
@@ -23,6 +24,10 @@ class MyFindsStatisticsGenerator
     document = Nokogiri::HTML.parse @html
     @engine = StatisticsEngine.new
     @engine.add_handler Counter.new
+    @engine.add_handler TopTen.new :date
+    @engine.add_handler TopTen.new :region
+    @engine.add_handler TopTen.new :country
+    @engine.add_handler TopTenMonths.new
     document.xpath( '//table[@class="Table"]/tbody/tr' ).each do |row|
       cells = row.search 'td'
       cache = {}
@@ -41,7 +46,7 @@ class MyFindsStatisticsGenerator
   def date_from cells
     american_date = cells[2].inner_text
     parts = american_date.split '/'
-    Date.new parts[2], parts[0], parts[1]
+    Date.new parts[2].to_i, parts[0].to_i, parts[1].to_i
   end
   
   def name_from cells

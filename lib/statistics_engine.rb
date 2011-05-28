@@ -19,7 +19,7 @@ class StatisticsEngine
   def report 
     msg = @handlers.size.to_s + " handlers have processed the data\n"
     @handlers.each do |h|
-      msg << h.report
+      msg << h.report + "\n\n"
     end
     msg
   end
