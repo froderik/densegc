@@ -24,10 +24,27 @@ class MyFindsStatisticsGenerator
     document = Nokogiri::HTML.parse @html
     @engine = StatisticsEngine.new
     @engine.add_handler Counter.new
-    @engine.add_handler TopTen.new :date
-    @engine.add_handler TopTen.new :region
-    @engine.add_handler TopTen.new :country
+    @engine.add_handler TopTen.new :date, 25
+    @engine.add_handler TopTen.new :region, 25
+    @engine.add_handler TopTen.new :country, 10
     @engine.add_handler TopTenMonths.new
+    @engine.add_handler TopTenWeeks.new
+    @engine.add_handler TopTenWeekDays.new
+    @engine.add_handler Suite.new 2
+    @engine.add_handler Suite.new 3
+    @engine.add_handler Suite.new 4
+    @engine.add_handler Suite.new 5
+    @engine.add_handler Suite.new 6
+    @engine.add_handler Suite.new 7
+    @engine.add_handler Suite.new 8
+    @engine.add_handler Suite.new 9
+    @engine.add_handler Suite.new 10
+    @engine.add_handler Suite.new 20
+    @engine.add_handler Suite.new 30
+    @engine.add_handler Suite.new 60
+    @engine.add_handler Suite.new 100
+    @engine.add_handler Suite.new 200
+    @engine.add_handler Suite.new 365
     document.xpath( '//table[@class="Table"]/tbody/tr' ).each do |row|
       cells = row.search 'td'
       cache = {}
@@ -62,8 +79,9 @@ class MyFindsStatisticsGenerator
       country = parts[1].strip.split( "\r" )[0]
     else
       region = ''
-      country = parts[0].strip
+      country = parts[0].strip.split( "\r" )[0]
     end
+    region = country if region.empty?
     [region, country]
   end
 end
